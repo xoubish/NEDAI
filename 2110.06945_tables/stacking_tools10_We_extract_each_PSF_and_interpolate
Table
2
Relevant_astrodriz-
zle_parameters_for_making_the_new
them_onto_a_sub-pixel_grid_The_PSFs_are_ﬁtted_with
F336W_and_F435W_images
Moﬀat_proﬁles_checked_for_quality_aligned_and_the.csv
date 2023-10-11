@@ -1,0 +1,11 @@
+0,1
+Parameter,Value
+driz cr corr,True
+driz combine,True
+clean,True
+final wcs,True
+final scale,0.03
+final pixfrac,0.6
+skymethod,globalmin+match
+skysub,True
+combine type,imedian

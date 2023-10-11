@@ -1,0 +1,11 @@
+0,1,2,3,4,5,6
+Telescope/Instrument,PID,PI,Project,Awarded,Observed,Conditions
+-,-,-,Type,(nights),(nights),-
+Keck I/LRIS,2014A W003LA,Cooke,Related,1.0,None,Weathered out (WO)
+Keck I/LRIS,2016A W034LA,Cooke,Related,2,0.4,Poor
+Keck I/LRIS,2018A W156,Cooke,Related,2,1,Poor/WO
+Keck I/LRIS,2018B N188,Rafelski,This program,1.5,None,WO
+Keck I/MOSFIRE,2018B W151,Bassett,Related,0.5,0.5,Good3
+LBT/MODS1,TS 2019B 011,Prichard,This program,1.5,None,WO
+Keck I/LRIS,2019B N010,Rafelski,This program,1.5,1.5,Moderate 80% usable)
+Keck I/LRIS,2020B N168,Prichard,This program,1.5,None,WO
