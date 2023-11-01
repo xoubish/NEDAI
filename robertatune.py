@@ -1,6 +1,5 @@
 import sys
 sys.path.append('code/')
-from utils import *
 
 from datasets import load_dataset
 from transformers import (
@@ -12,15 +11,39 @@ from transformers import (
 )
 from peft import get_peft_config, PeftModel, PeftConfig, get_peft_model, LoraConfig, TaskType
 import evaluate
-import torch
 import numpy as np
 
-seqeval = evaluate.load("seqeval")
+import torch
+print("Using device:", torch.device("cuda" if torch.cuda.is_available() else "cpu"))
 
-model_checkpoint = "roberta-large"
-lr = 1e-3
-batch_size = 16
-num_epochs = 10
+def compute_metrics(p):
+    predictions, labels = p
+    predictions = np.argmax(predictions, axis=2)
+
+    true_predictions = [
+        [label_list[p] for (p, l) in zip(prediction, label) if l != -100]
+        for prediction, label in zip(predictions, labels)
+    ]
+    true_labels = [
+        [label_list[l] for (p, l) in zip(prediction, label) if l != -100]
+        for prediction, label in zip(predictions, labels)
+    ]
+
+    results = seqeval.compute(predictions=true_predictions, references=true_labels)
+    return {
+        "precision": results["overall_precision"],
+        "recall": results["overall_recall"],
+        "f1": results["overall_f1"],
+        "accuracy": results["overall_accuracy"],
+    }
+    
+def recursive_label2id_conversion(label, label2id):
+    if isinstance(label, str):
+        return label2id[label]
+    elif isinstance(label, list):
+        return [recursive_label2id_conversion(l, label2id) for l in label]
+    else:
+        raise ValueError("Unsupported label type")
 
 def process_sample(batch):
     tokens_list = []
@@ -46,21 +69,6 @@ def process_sample(batch):
     
     return {'tokens': tokens_list, 'tags': tags_list}
     
-
-data_files = {
-    'train': 'data/train.txt',
-    'validation': 'data/val.txt',
-    'test': 'data/test.txt'
-}
-
-# Load the dataset from local files without specifying a script
-dataset = load_dataset('text', data_files=data_files)
-pdataset = dataset.map(process_sample, batched=True, remove_columns=['text'])
-
-tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, add_prefix_space=True)
-data_collator = DataCollatorForTokenClassification(tokenizer=tokenizer)
-
-        
 def tokenize_and_align_labels(examples, label2id):
     tokenized_inputs = tokenizer(examples["tokens"], truncation=True, is_split_into_words=True)
 
@@ -97,6 +105,7 @@ id2label = {
     9: "B-Type",
     10: "I-Type",
 }
+
 label2id = {"O": 0,
           "B-ap_name1": 1,
           "I-ap_name1": 2,
@@ -110,17 +119,34 @@ label2id = {"O": 0,
           "I-Type": 10,
          }
 
+data_files = {
+    'train': 'data/train.txt',
+    'validation': 'data/val.txt',
+    'test': 'data/test.txt'
+}
+
+model_checkpoint = "roberta-large"
+lr = 1e-3
+batch_size = 8
+num_epochs = 10
+
+
+seqeval = evaluate.load("seqeval")
+
+# Load the dataset from local files without specifying a script
+dataset = load_dataset('text', data_files=data_files)
+pdataset = dataset.map(process_sample, batched=True, remove_columns=['text'])
+
+# Load a tokenizer, data_collator, and map the data
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, add_prefix_space=True)
+data_collator = DataCollatorForTokenClassification(tokenizer=tokenizer)
 tokenized_datap = pdataset.map(tokenize_and_align_labels, batched=True, fn_kwargs={"label2id": label2id})
 
+
 model = AutoModelForTokenClassification.from_pretrained(model_checkpoint, num_labels=11, id2label=id2label, label2id=label2id)
-
 peft_config = LoraConfig(task_type=TaskType.TOKEN_CLS, inference_mode=False, r=16, lora_alpha=16, lora_dropout=0.1, bias="all")
-
 model = get_peft_model(model, peft_config)
 model.print_trainable_parameters()
-
-import torch
-print("Using device:", torch.device("cuda" if torch.cuda.is_available() else "cpu"))
 
 #automatically checks for GPU
 training_args = TrainingArguments(
