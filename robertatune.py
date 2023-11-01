@@ -48,9 +48,9 @@ def process_sample(batch):
     
 
 data_files = {
-    'train': 'train.txt',
-    'validation': 'val.txt',
-    'test': 'test.txt'
+    'train': 'data/train.txt',
+    'validation': 'data/val.txt',
+    'test': 'data/test.txt'
 }
 
 # Load the dataset from local files without specifying a script
