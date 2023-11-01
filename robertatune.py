@@ -92,6 +92,19 @@ def tokenize_and_align_labels(examples, label2id):
     tokenized_inputs["labels"] = labels
     return tokenized_inputs
 
+label_list = [
+    "O",
+    "B-ap_name1",
+    "I-ap_name1",
+    "B-vz1",
+    "I-vz1",
+    "B-coordx1",
+    "I-coordx1",
+    "B-coordy1",
+    "I-coordy1",
+    "B-Type",
+    "I-Type",
+]
 id2label = {
     0: "O",
     1: "B-ap_name1",
