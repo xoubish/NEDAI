@@ -36,7 +36,34 @@ def compute_metrics(p):
         "f1": results["overall_f1"],
         "accuracy": results["overall_accuracy"],
     }
+ 
+def compute_metrics2(p):
+    predictions, labels = p
+    predictions = np.argmax(predictions, axis=2)
+
+    # Convert numerical predictions and labels to their string representations
+    true_predictions = [
+        [label_list[p] for (p, l) in zip(prediction, label) if l != -100]
+        for prediction, label in zip(predictions, labels)
+    ]
+    true_labels = [
+        [label_list[l] for (p, l) in zip(prediction, label) if l != -100]
+        for prediction, label in zip(predictions, labels)
+    ]
+
+    # Use seqeval to compute metrics
+    results = seqeval.compute(predictions=true_predictions, references=true_labels)
     
+    # Extract metrics specifically for ap_name1
+    ap_name1_metrics = results.get("ap_name1", {"precision": 0, "recall": 0, "f1": 0})
+
+    return {
+        "ap_name1_precision": ap_name1_metrics["precision"],
+        "ap_name1_recall": ap_name1_metrics["recall"],
+        "ap_name1_f1": ap_name1_metrics["f1"],
+        "overall_accuracy": results["overall_accuracy"],
+    }
+
 def recursive_label2id_conversion(label, label2id):
     if isinstance(label, str):
         return label2id[label]
@@ -181,7 +208,7 @@ trainer = Trainer(
     eval_dataset=tokenized_datap["validation"],
     tokenizer=tokenizer,
     data_collator=data_collator,
-    compute_metrics=compute_metrics,
+    compute_metrics=compute_metrics2,
 )
 
 trainer.train()
