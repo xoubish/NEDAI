@@ -129,8 +129,8 @@ label_list = [
     "I-coordx1",
     "B-coordy1",
     "I-coordy1",
-    "B-Type",
-    "I-Type",
+    "B-type1",
+    "I-type1",
 ]
 id2label = {
     0: "O",
@@ -142,8 +142,8 @@ id2label = {
     6: "I-coordx1",
     7: "B-coordy1",
     8: "I-coordy1",
-    9: "B-Type",
-    10: "I-Type",
+    9: "B-type1",
+    10: "I-type1",
 }
 
 label2id = {"O": 0,
@@ -155,8 +155,8 @@ label2id = {"O": 0,
           "I-coordx1": 6,
           "B-coordy1": 7,
           "I-coordy1": 8,
-          "B-Type": 9,
-          "I-Type": 10,
+          "B-type1": 9,
+          "I-type1": 10,
          }
 
 data_files = {
@@ -168,7 +168,7 @@ data_files = {
 model_checkpoint = "roberta-large"
 lr = 1e-3
 batch_size = 8
-num_epochs = 10
+num_epochs = 50
 
 
 seqeval = evaluate.load("seqeval")
