@@ -160,15 +160,15 @@ label2id = {"O": 0,
          }
 
 data_files = {
-    'train': 'data/train.txt',
-    'validation': 'data/val.txt',
-    'test': 'data/test.txt'
+    'train': 'data/filtered_train.txt',
+    'validation': 'data/filtered_val.txt',
+    'test': 'data/filtered_test.txt'
 }
 
 model_checkpoint = "roberta-large"
 lr = 1e-3
-batch_size = 8
-num_epochs = 50
+batch_size = 16
+num_epochs = 20
 
 
 seqeval = evaluate.load("seqeval")
