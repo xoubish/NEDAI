@@ -4,6 +4,8 @@
 /data/*
 !/data/.gitkeep
 
+/results/*
+/ner_model/*
 /roberta-large-lora-token-classification/*
 /wandb/*
 
