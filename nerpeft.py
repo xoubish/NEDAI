@@ -71,6 +71,20 @@ data_files = {
 model_checkpoint = "dslim/bert-base-NER"
 seqeval = evaluate.load("seqeval")
 
+label_list = [
+    "O",
+    "B-ap_name1",
+    "I-ap_name1",
+    "B-vz1",
+    "I-vz1",
+    "B-coordx1",
+    "I-coordx1",
+    "B-coordy1",
+    "I-coordy1",
+    "B-type1",
+    "I-type1",
+]
+
 id2label = {
     0: "O",
     1: "B-ap_name1",
