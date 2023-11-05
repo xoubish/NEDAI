@@ -36,7 +36,8 @@ def compute_metrics(p):
         "f1": results["overall_f1"],
         "accuracy": results["overall_accuracy"],
     }
- def process_sample(batch):
+
+def process_sample(batch):
     tokens_list = []
     tags_list = []
     tokens = []
@@ -112,14 +113,12 @@ def recursive_label2id_conversion(label, label2id):
         return [recursive_label2id_conversion(l, label2id) for l in label]
     else:
         raise ValueError("Unsupported label type")
-        
+
 def tokenize_and_align_labels2(examples, label2id):
     tokenized_inputs = tokenizer(examples["tokens"], truncation=True, is_split_into_words=True)
-
     labels = []
     for i, label in enumerate(examples[f"tags"]):
         converted_label = recursive_label2id_conversion(label, label2id)
-
         word_ids = tokenized_inputs.word_ids(batch_index=i)
         previous_word_idx = None
         label_ids = []
@@ -142,7 +141,7 @@ peft_config = LoraConfig(task_type=TaskType.TOKEN_CLS, inference_mode=False, r=1
 model = get_peft_model(model, peft_config)
 model.print_trainable_parameters()
 
-lr = 1e-3 # I removed lr from training_args so it uses some default?
+#lr = 1e-3 # I removed lr from training_args so it uses some default?
 batch_size = 8
 num_epochs = 30
 
@@ -165,7 +164,7 @@ trainer = Trainer(
     eval_dataset=tokenized_datap["validation"],
     tokenizer=tokenizer,
     data_collator=data_collator,
-    compute_metrics=compute_metrics2,
+    compute_metrics=compute_metrics,
 )
 
 trainer.train()
