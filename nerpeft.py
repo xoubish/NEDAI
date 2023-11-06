@@ -157,7 +157,7 @@ model.print_trainable_parameters()
 
 #lr = 1e-3 # I removed lr from training_args so it uses some default?
 batch_size = 8
-num_epochs = 30
+num_epochs = 60
 
 #automatically checks for GPU
 training_args = TrainingArguments(
@@ -168,6 +168,7 @@ training_args = TrainingArguments(
     weight_decay=0.01,
     evaluation_strategy="epoch",
     save_strategy="epoch",
+    save_total_limit=2,
     load_best_model_at_end=True,
 )
 
