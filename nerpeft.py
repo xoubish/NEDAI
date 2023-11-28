@@ -68,7 +68,7 @@ data_files = {
     'test': 'data/filtered_test.txt'
 }
 
-model_checkpoint = "dslim/bert-base-NER"
+model_checkpoint = "Jean-Baptiste/roberta-large-ner-english"#"dslim/bert-base-NER"
 seqeval = evaluate.load("seqeval")
 
 label_list = [
@@ -117,7 +117,7 @@ pdataset = dataset.map(process_sample, batched=True, remove_columns=['text'])
 
 
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, add_prefix_space=True)
-model = AutoModelForTokenClassification.from_pretrained("dslim/bert-base-NER", num_labels=11, id2label=id2label, label2id=label2id,ignore_mismatched_sizes=True)
+model = AutoModelForTokenClassification.from_pretrained(model_checkpoint, num_labels=11, id2label=id2label, label2id=label2id,ignore_mismatched_sizes=True)
 data_collator = DataCollatorForTokenClassification(tokenizer)
 
 def recursive_label2id_conversion(label, label2id):
@@ -161,11 +161,11 @@ num_epochs = 60
 
 #automatically checks for GPU
 training_args = TrainingArguments(
-    output_dir="NER-BERT-lora-token-classification",
+    output_dir="NER-RoBERT-lora-token-classification",
     per_device_train_batch_size=batch_size,
     per_device_eval_batch_size=batch_size,
     num_train_epochs=num_epochs,
-    weight_decay=0.001,
+    weight_decay=0.01,
     evaluation_strategy="epoch",
     save_strategy="epoch",
     save_total_limit=2,
